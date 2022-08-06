@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "event-sourcing-workshop", "event-sourcing-workshop\event-sourcing-workshop.csproj", "{3CBAC12D-1936-4AD3-8F50-17B07F60802C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "event-sourcing-workshop-tests", "event-sourcing-workshop-tests\event-sourcing-workshop-tests.csproj", "{F4B08C31-FE4C-421D-8B16-13A708C5CB67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CBAC12D-1936-4AD3-8F50-17B07F60802C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CBAC12D-1936-4AD3-8F50-17B07F60802C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CBAC12D-1936-4AD3-8F50-17B07F60802C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CBAC12D-1936-4AD3-8F50-17B07F60802C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4B08C31-FE4C-421D-8B16-13A708C5CB67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4B08C31-FE4C-421D-8B16-13A708C5CB67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4B08C31-FE4C-421D-8B16-13A708C5CB67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4B08C31-FE4C-421D-8B16-13A708C5CB67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
