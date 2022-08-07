@@ -30,24 +30,8 @@ public class AccountRepository
     {
         //Apply all events on a new Account to retrieve the current state
         Account account = new Account(accountId);
-        foreach (AccountEvent accountEvent in events) {
-            if (accountEvent.GetType() == typeof(AccountOpened))
-            {
-                account.Apply((AccountOpened)accountEvent);
-            } else if (accountEvent.GetType() == typeof(AccountClosed))
-            {
-                account.Apply((AccountClosed)accountEvent);
-            } else if (accountEvent.GetType() == typeof(AccountDeposited))
-            {
-                account.Apply((AccountDeposited)accountEvent);
-            } else if (accountEvent.GetType() == typeof(AccountWithdrawn))
-            {
-                account.Apply((AccountWithdrawn)accountEvent);
-            }
-            else
-            {
-              throw new Exception("Unexpected value: " + accountEvent);
-            }
+        foreach (var accountEvent in events) {
+            accountEvent.ApplyOn(account);            
         }
         return account;
     }

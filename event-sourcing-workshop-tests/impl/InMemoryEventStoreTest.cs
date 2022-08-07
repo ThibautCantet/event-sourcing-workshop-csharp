@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using fr.soat.banking.domain;
 using fr.soat.eventsourcing.api;
+using fr.soat.eventsourcing.eventpublisher;
 using fr.soat.eventsourcing.impl;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,7 +10,7 @@ namespace event_sourcing_workshop_tests;
 [TestClass]
 public class InMemoryEventStoreTest
 {
-    IEventStore _eventStore = new InMemoryEventStore();
+    IEventStore _eventStore = new InMemoryEventStore(new ApplicationEventPublisher());
     private AccountId _accountId = AccountId.Next();
 
     [TestInitialize]

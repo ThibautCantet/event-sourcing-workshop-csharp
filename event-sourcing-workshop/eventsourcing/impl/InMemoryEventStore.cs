@@ -1,5 +1,5 @@
-using System.Collections.ObjectModel;
 using fr.soat.eventsourcing.api;
+using fr.soat.eventsourcing.eventpublisher;
 
 namespace fr.soat.eventsourcing.impl;
 
@@ -8,6 +8,12 @@ public class InMemoryEventStore : IEventStore
     private Dictionary<String, List<IEvent>> _store = new();
     //private Object lock = new Object();
 
+    private ApplicationEventPublisher eventPublisher;
+
+    public InMemoryEventStore(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+    
     public List<IEvent> LoadEvents(IAggregateId aggregateId)
     {
         //synchronized (lock) {
@@ -24,7 +30,9 @@ public class InMemoryEventStore : IEventStore
 
         for (int i = previousEvents.Count; i < events.Count; i++)
         {
-            previousEvents.Add(events[i]);
+            var @event = events[i];
+            previousEvents.Add(@event);
+            eventPublisher.PublishEvent(@event);
         }
 
         _store[aggregateId.ToString()] = previousEvents;
