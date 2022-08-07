@@ -29,21 +29,23 @@ public class BankCommandHandler
     //@Command
     public void Deposit(AccountId id, int amount)
     {
-        //FIXME
         // 1. load the account aggregate using the repository
-        // 2. invoke the decision function deposit() on the aggregate to Apply the business logic
+        Account account = _repository.Load(id);
+        // 2. invoke the decision function deposit() on the aggregate to apply the business logic
+        account.Deposit(amount);
         // 3. save the mutated aggregate with the repository
-        throw new Exception("implement me !");
+        _repository.Save(account);
     }
 
     //@Command
     public void Withdraw(AccountId id, int amount)
     {
-        //FIXME
         // 1. load the account aggregate using the repository
-        // 2. invoke the decision function withdraw() on the aggregate to Apply the business logic
+        Account account = _repository.Load(id);
+        // 2. invoke the decision function withdraw() on the aggregate to apply the business logic
+        account.Withdraw(amount);
         // 3. save the mutated aggregate with the repository
-        throw new Exception("implement me !");
+        _repository.Save(account);
     }
 
     //@Command

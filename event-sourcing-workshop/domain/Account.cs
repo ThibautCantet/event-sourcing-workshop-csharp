@@ -71,12 +71,16 @@ public class Account : AggregateRoot<AccountId>
     //@DecisionFunction
     public Account Deposit(int amount)
     {
-        //FIXME
-        // 1. apply the business logic: check:
-        // - the account is valid to make a deposit (expected to be an open account)
-        // - the withdraw amount is not greater than the current balance !
-        // 2. invoke the evolution function passing a new AccountWithdrawn event containing the mutation description (delta on the balance)
-        throw new Exception("implement me !");
+        // 1. Apply the business logic: check the account is valid to make a deposit (expected to be an open account)
+        if (Status != AccountStatus.Open)
+        {
+            throw new UnsupportedOperationException("Can not deposit a " + Status + " account");
+        }
+
+        // 2. invoke the evolution function passing a new AccountDeposited event containing the mutation description (delta on the balance)
+        AccountDeposited e = new AccountDeposited(GetId(), amount);
+        Apply(e);
+        return this;
     }
 
     //@DecisionFunction
@@ -85,8 +89,17 @@ public class Account : AggregateRoot<AccountId>
         // 1. Apply the business logic: check:
         // - the account is valid to make a deposit (expected to be an open account)
         // - the withdraw amount is not greater than the current balance !
+        if (Status != AccountStatus.Open)
+        {
+            throw new UnsupportedOperationException("Can not deposit a " + Status + " account");
+        }
+        if (Balance < amount) {
+            throw new InsufficientFundsException("Withdrawal of " + amount + " can not be applied with balance of " + Balance);
+        }
         // 2. invoke the evolution function passing a new AccountWithdrawn event containing the mutation description (delta on the balance)
-        throw new Exception("implement me !");
+        AccountWithdrawn e = new AccountWithdrawn(GetId(), amount);
+        Apply(e);
+        return this;
     }
 
     //@DecisionFunction
