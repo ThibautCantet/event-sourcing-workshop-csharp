@@ -128,6 +128,14 @@ public class Account : AggregateRoot<AccountId>
             throw new UnsupportedOperationException("Can not transfer from a " + Status + " account");
         }
 
+        if (receiverAccount.Status == AccountStatus.Closed)
+        {
+            Apply(new TransferRequested(GetId(), receiverAccount.GetId(), amount));
+            Apply(new TransferRequestAborted(GetId(), receiverAccount.GetId(), amount));
+            receiverAccount.Apply(new CreditRequestRefused(GetId(), receiverAccount.GetId(), amount));
+            return this;
+        }
+
         if (amount <= Balance)
         {
             // transfer authorized
@@ -136,9 +144,8 @@ public class Account : AggregateRoot<AccountId>
         }
         else
         {
-            //FIXME when funds are insufficient...
             // Apply a TransferRequestRefused evolution on sender account
-            throw new Exception("implement me !");
+            Apply(new TransferRequestRefused(GetId(), receiverAccount.GetId(), amount));
         }
 
         return this;
@@ -159,14 +166,24 @@ public class Account : AggregateRoot<AccountId>
     //@DecisionFunction
     public void Credit(Account senderAccount, int amount)
     {
-        //FIXME expected implementation:
         // IF the receiver account is OPEN
-        // 1. Apply a FundCredited evolution on receiver account
-        // 2. make debit() decition on sender account
+        // 1. apply a FundCredited evolution on receiver account
+        // 2. make debit() decision on sender account
+        if (Status == AccountStatus.Open)
+        {
+            FundCredited evt = new FundCredited(GetId(), senderAccount.GetId(), amount);
+            Apply(evt);
+            senderAccount.Debit(GetId(), amount);
+        }
         // ELSE
-        // 1. Apply a CreditRequestRefused evolution on receiver account
+        // 1. apply a CreditRequestRefused evolution on receiver account
         // 2. make abortTransferRequest() decision on sender account
-        throw new Exception("implement me !");
+        else
+        {
+            CreditRequestRefused evt = new CreditRequestRefused(GetId(), senderAccount.GetId(), amount);
+            Apply(evt);
+            AbortTransferRequest(senderAccount.GetId(), amount);
+        }
     }
 
     //@EvolutionFunction
