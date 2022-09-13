@@ -1,25 +1,21 @@
 namespace fr.soat.banking.domain;
 
-public class AccountDeposited : AccountEvent, IEquatable<AccountDeposited>
+//@EqualsAndHashCode
+public class AccountCredited : AccountEvent, IEquatable<AccountCredited>
 {
     public int Amount { get; }
 
-    public AccountDeposited(AccountId accountId, int amount) : base(accountId)
+    public AccountCredited(AccountId accountId, int amount) : base(accountId)
     {
         Amount = amount;
     }
-
-    public int GetAmount()
-    {
-        return Amount;
-    }
-
+    
     public override void ApplyOn(Account account)
     {
         account.Apply(this);
     }
 
-    public bool Equals(AccountDeposited? other)
+    public bool Equals(AccountCredited? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -30,8 +26,8 @@ public class AccountDeposited : AccountEvent, IEquatable<AccountDeposited>
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((AccountDeposited)obj);
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((AccountCredited)obj);
     }
 
     public override int GetHashCode()

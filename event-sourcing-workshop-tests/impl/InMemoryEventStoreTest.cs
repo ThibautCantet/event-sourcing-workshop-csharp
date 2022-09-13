@@ -26,10 +26,7 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 100),
-            new AccountWithdrawn(_accountId, 50),
-            new AccountClosed(_accountId)
+            new AccountCredited(_accountId, 100)
         };
 
         // When
@@ -62,20 +59,14 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 100),
-            new AccountWithdrawn(_accountId, 50),
-            new AccountClosed(_accountId)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, events);
 
         // When
         List<IEvent> sameEvents = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 100),
-            new AccountWithdrawn(_accountId, 50),
-            new AccountClosed(_accountId)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, sameEvents);
         List<IEvent> reloadedEvents = _eventStore.LoadEvents(_accountId);
@@ -92,13 +83,12 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 200)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, events);
 
         // When
-        events.Add(new AccountClosed(_accountId));
+        events.Add(new AccountCredited(_accountId, 100));
         _eventStore.Store(_accountId, events);
 
         // Then
@@ -113,15 +103,14 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 200)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, events);
 
         // When
-        events.Add(new AccountDeposited(_accountId, 10));
-        events.Add(new AccountDeposited(_accountId, 20));
-        events.Add(new AccountDeposited(_accountId, 30));
+        events.Add(new AccountCredited(_accountId, 10));
+        events.Add(new AccountCredited(_accountId, 20));
+        events.Add(new AccountCredited(_accountId, 30));
         _eventStore.Store(_accountId, events);
 
         // Then
@@ -136,20 +125,18 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 100),
-            new AccountWithdrawn(_accountId, 50)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, events);
 
         // When
         List<IEvent> newEvents = new List<IEvent>(events);
-        newEvents.Add(new AccountClosed(_accountId));
+        //newEvents.Add(new AccountCredited(_accountId));
         _eventStore.Store(_accountId, newEvents);
 
         // Then
         List<IEvent> anotherNewEvents = new List<IEvent>(events);
-        anotherNewEvents.Add(new AccountWithdrawn(_accountId, 10));
+      //  anotherNewEvents.Add(new AccountWithdrawn(_accountId, 10));
         var ex = Assert.ThrowsException<EventConcurrentUpdateException>(() =>
             _eventStore.Store(_accountId, anotherNewEvents));
         Assert.Equals(ex.Message, "Failed to save events, version mismatch (there was a concurrent update)");
@@ -162,18 +149,14 @@ public class InMemoryEventStoreTest
         _accountId = AccountId.Next();
         List<IEvent> events = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 100),
-            new AccountDeposited(_accountId, 200),
-            new AccountWithdrawn(_accountId, 50)
+            new AccountCredited(_accountId, 100)
         };
         _eventStore.Store(_accountId, events);
 
         // When
         List<IEvent> anotherEventsLateVersion = new List<IEvent>
         {
-            new AccountOpened(_accountId, "toto", "1234-5678-9101"),
-            new AccountDeposited(_accountId, 500)
+            new AccountCredited(_accountId, 100)
         };
 
         // Then
