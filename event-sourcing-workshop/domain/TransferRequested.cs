@@ -13,4 +13,9 @@ public class TransferRequested : TransferEvent {
     public override void ApplyOn(Account account) {
         account.Apply(this);
     }
+
+    public AccountId ReceiverAccountId()
+    {
+        return receiverAccountId;
+    }
 }

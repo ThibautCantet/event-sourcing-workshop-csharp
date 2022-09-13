@@ -128,19 +128,10 @@ public class Account : AggregateRoot<AccountId>
             throw new UnsupportedOperationException("Can not transfer from a " + Status + " account");
         }
 
-        if (receiverAccount.Status == AccountStatus.Closed)
-        {
-            Apply(new TransferRequested(GetId(), receiverAccount.GetId(), amount));
-            Apply(new TransferRequestAborted(GetId(), receiverAccount.GetId(), amount));
-            receiverAccount.Apply(new CreditRequestRefused(GetId(), receiverAccount.GetId(), amount));
-            return this;
-        }
-
         if (amount <= Balance)
         {
             // transfer authorized
-            Apply(new TransferRequested(GetId(), receiverAccount.GetId(), amount));
-            receiverAccount.Credit(this, amount);
+            Apply(new TransferRequested(GetId(), receiverAccount.GetId(), amount)); 
         }
         else
         {
@@ -164,25 +155,23 @@ public class Account : AggregateRoot<AccountId>
     }
 
     //@DecisionFunction
-    public void Credit(Account senderAccount, int amount)
+    public void Credit(AccountId senderAccountId, int amount)
     {
         // IF the receiver account is OPEN
         // 1. apply a FundCredited evolution on receiver account
         // 2. make debit() decision on sender account
         if (Status == AccountStatus.Open)
         {
-            FundCredited evt = new FundCredited(GetId(), senderAccount.GetId(), amount);
+            FundCredited evt = new FundCredited(GetId(), senderAccountId, amount);
             Apply(evt);
-            senderAccount.Debit(GetId(), amount);
         }
         // ELSE
         // 1. apply a CreditRequestRefused evolution on receiver account
         // 2. make abortTransferRequest() decision on sender account
         else
         {
-            CreditRequestRefused evt = new CreditRequestRefused(GetId(), senderAccount.GetId(), amount);
+            CreditRequestRefused evt = new CreditRequestRefused(GetId(), senderAccountId, amount);
             Apply(evt);
-            AbortTransferRequest(senderAccount.GetId(), amount);
         }
     }
 

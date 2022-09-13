@@ -4,16 +4,16 @@ namespace fr.soat.banking.domain;
 
 public abstract class AccountEvent : IEvent
 {
-    private readonly AccountId _accountId;
+    public AccountId AccountId { get; }
 
     protected AccountEvent(AccountId id)
     {
-        _accountId = id;
+        AccountId = id;
     }
 
     public IAggregateId GetAggregateId()
     {
-        return _accountId;
+        return AccountId;
     }
 
     public abstract void ApplyOn(Account account);

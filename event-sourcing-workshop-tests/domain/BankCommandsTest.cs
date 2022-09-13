@@ -11,7 +11,17 @@ namespace event_sourcing_workshop_tests;
 [TestClass]
 public class BankCommandsTest
 {
-    private BankCommandHandler _bankCommandHandler = new(new AccountRepository(new InMemoryEventStore(new ApplicationEventPublisher())));
+    private BankCommandHandler _bankCommandHandler;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        var applicationEventPublisher = new ApplicationEventPublisher();
+        var accountRepository = new AccountRepository(new InMemoryEventStore(applicationEventPublisher));
+        _bankCommandHandler   = new(accountRepository);
+        var transferProcessManager = new TransferProcessManager(accountRepository);
+        applicationEventPublisher.Subscribe(transferProcessManager);
+    }
 
     [TestMethod]
     public void should_register_a_new_account_then_use_then_close()

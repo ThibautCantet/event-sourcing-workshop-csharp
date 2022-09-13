@@ -1,6 +1,8 @@
+using fr.soat.eventsourcing.api;
+
 namespace fr.soat.eventsourcing.eventpublisher;
 
 public interface IListener
 {
-    void OnMessage(Object msg);
+    void OnMessage(IEvent msg);
 }

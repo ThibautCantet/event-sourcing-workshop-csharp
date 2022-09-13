@@ -4,11 +4,11 @@ namespace fr.soat.banking.domain;
 //@EqualsAndHashCode
 public class CreditRequestRefused : TransferEvent {
 
-    private AccountId sourceAccountId;
+    public AccountId SourceAccountId { get; }
 
     public CreditRequestRefused(AccountId id, AccountId sourceAccountId, int amount): base(id, amount) 
     {
-        this.sourceAccountId = sourceAccountId;
+        this.SourceAccountId = sourceAccountId;
     }
 
     public override void ApplyOn(Account account) {

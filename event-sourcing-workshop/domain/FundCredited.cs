@@ -3,11 +3,11 @@ namespace fr.soat.banking.domain;
 //@EqualsAndHashCode
 public class FundCredited : TransferEvent
 {
-    private AccountId senderAccountId;
+    public AccountId SenderAccountId { get; }
 
     public FundCredited(AccountId accountId, AccountId senderAccountId, int amount) : base(accountId, amount)
     {
-        this.senderAccountId = senderAccountId;
+        SenderAccountId = senderAccountId;
     }
     
     public override void ApplyOn(Account account)

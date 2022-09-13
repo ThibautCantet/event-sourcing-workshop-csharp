@@ -1,3 +1,5 @@
+using fr.soat.eventsourcing.api;
+
 namespace fr.soat.eventsourcing.eventpublisher;
 
 public class ApplicationEventPublisher
@@ -12,7 +14,7 @@ public class ApplicationEventPublisher
         subs.Add(l);
     }
 
-    public void PublishEvent(Object msg) {
+    public void PublishEvent(IEvent msg) {
         foreach (IListener l in subs) {
             l.OnMessage(msg);
         }
