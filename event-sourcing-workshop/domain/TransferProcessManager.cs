@@ -29,12 +29,13 @@ public class TransferProcessManager : IListener {
     //@EventListener
     public void On(FundCredited fundCredited) {
         Console.Out.WriteLine("consuming {0}", fundCredited.GetType().Name);
-        //FIXME
         // when triggered on a FundCredited
         // 1. reload the sender Account
+        Account senderAccount = accountRepository.Load(fundCredited.SenderAccountId);
         // 2. make debit() decision on sender account
+        senderAccount.Debit(fundCredited.AccountId, fundCredited.Amount);
         // 3. save the sender Account
-        throw new Exception("implement me !");
+        accountRepository.Save(senderAccount);
     }
 
     public void OnMessage(IEvent msg)
