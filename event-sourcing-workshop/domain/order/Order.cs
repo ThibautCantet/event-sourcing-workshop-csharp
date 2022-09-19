@@ -3,8 +3,9 @@ using fr.soat.eventsourcing.api;
 
 namespace fr.soat.banking.domain;
 
+
 public class Order : AggregateRoot<OrderId> {
-    public OrderStatus Status { get; }
+    public OrderStatus Status { get; private set; }
     public ConferenceName ConferenceName { get; private set; }
     public AccountId AccountId { get; private set; }
 
@@ -13,7 +14,7 @@ public class Order : AggregateRoot<OrderId> {
 
     public Order(OrderId orderId) : base(orderId) 
     {
-        Status = OrderStatus.NEW;
+        this.Status = OrderStatus.NEW;
     }
 
     //@DecisionFunction
@@ -24,76 +25,79 @@ public class Order : AggregateRoot<OrderId> {
 
     //@EvolutionFunction
     public void Apply(OrderRequested orderRequested) {
-        //FIXME
         // should init the state of order (accountId, conferenceName)
-        throw new Exception("implement me !");
+        RecordChange(orderRequested);
+        this.AccountId = orderRequested.AccountId;
+        this.ConferenceName = orderRequested.ConferenceName;
     }
 
     //@DecisionFunction
     public Order assign(Seat bookedSeat) {
-        //TODO(FIXME)
         //  expected output event is:
         // - OrderSeatBooked
-        throw new Exception("implement me !");
+        Apply(new OrderSeatBooked(GetId(), bookedSeat));
+        return this;
     }
 
     //@EvolutionFunction
     public void Apply(OrderSeatBooked orderSeatBooked) {
-        //TODO(FIXME)
         // should update state (order status and assigned seat)
-        throw new Exception("implement me !");
+        RecordChange(orderSeatBooked);
+        Status = OrderStatus.SEAT_BOOKED;
+        Seat = orderSeatBooked.BookedSeat;
     }
 
     //@DecisionFunction
     public void failSeatBooking() {
-        //TODO(FIXME)
         //  expected output event is:
         // - OrderSeatBookingFailed
-        throw new Exception("implement me !");
+        Apply(new OrderSeatBookingFailed(GetId()));
     }
 
     //@EvolutionFunction
     public void Apply(OrderSeatBookingFailed orderSeatBookingFailed) {
-        //TODO(FIXME)
         // should update state:
         // - order status
         // - (no) assigned seat
-        throw new Exception("implement me !");
+        RecordChange(orderSeatBookingFailed);
+        Status = OrderStatus.SEAT_BOOKING_FAILED;
+        Seat = null;
     }
 
     //@DecisionFunction
     public void confirmPayment(PaymentReference paymentReference) {
-        //TODO(FIXME)
         //  expected output event is:
         // - OrderPaid
-        throw new Exception("implement me !");
+        Apply(new OrderPaid(GetId(), paymentReference));
     }
 
     //@EvolutionFunction
     public void Apply(OrderPaid orderPaid) {
-        //TODO(FIXME)
         // should update state:
         // - order status
         // - the payment reference
-        throw new Exception("implement me !");
+        RecordChange(orderPaid);
+        Status = OrderStatus.PAID;
+        PaymentReference = orderPaid.PaymentReference;
     }
 
     //@DecisionFunction
     public void refusePayment() {
-        //TODO(FIXME)
         //  expected output event is:
         // - OrderPaymentRefused
-        throw new Exception("implement me !");
+        Apply(new OrderPaymentRefused(GetId()));
     }
 
     //@EvolutionFunction
     public void Apply(OrderPaymentRefused orderPaymentRefused) {
-        //TODO(FIXME)
         // should update state:
         // - order status
         // - (no) payment reference
         // - but also the fact the is NO more assigned seat !
-        throw new Exception("implement me !");
+        RecordChange(orderPaymentRefused);
+        Status = OrderStatus.PAYMENT_REFUSED;
+        PaymentReference = null;
+        Seat = null;
     }
 
 }

@@ -14,30 +14,38 @@ public class Account : AggregateRoot<AccountId>
     //@DecisionFunction
     public void Credit(int amount)
     {
-        //TODO(FIXME)
         // The expected output event is:
         // - AccountCredited
-        throw new Exception("implement me !");
+        var evt = new AccountCredited(GetId(), amount);
+        Apply(evt);
     }
         
     //@EvolutionFunction
     internal void Apply(AccountCredited e)
     {
-        //TODO(FIXME)
-        // should update the balance !
-        throw new Exception("implement me !");
+        RecordChange(e);
+        Balance += e.Amount;
     }
     
     //@DecisionFunction
     public Account RequestPayment(int amount, OrderId orderId)
     {
-        //TODO(FIXME)
         // 1. should always keep trace of request (PaymentRequested event)
-        // 2. should then check if funds are sufficient
-        // The possible expected output events are:
-        // - PaymentAccepted
-        // - PaymentRefused
-        throw new Exception("implement me !");
+        var paymentRequested = new PaymentRequested(GetId(), amount);
+        Apply(paymentRequested); 
+
+        if (Balance >= amount)
+        {
+            var paymentAccepted = new PaymentAccepted(PaymentReference.genereate(), GetId(), amount, orderId);
+            Apply(paymentAccepted);
+        }
+        else
+        {
+            // Apply a TransferRequestRefused evolution on sender account
+            Apply(new PaymentRefused(GetId(), amount, orderId));
+        }
+
+        return this;
     }
 
     //@EvolutionFunction
@@ -49,9 +57,9 @@ public class Account : AggregateRoot<AccountId>
     //@EvolutionFunction
     public void Apply(PaymentAccepted paymentAccepted)
     {
-        //TODO(FIXME)
         // should update the balance !
-        throw new Exception("implement me !");
+        RecordChange(paymentAccepted);
+        Balance -= paymentAccepted.Amount;
     }
 
     //@EvolutionFunction
